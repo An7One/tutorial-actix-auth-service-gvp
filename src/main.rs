@@ -15,12 +15,15 @@ async fn main() -> Result<()>{
 
     let config = Config::from_env()
         .expect("Server configuration");
+
+    let pool = config.db_pool().await.expect("Database configuration");
     
     info!("Staring the server at http://{}:{}", config.host, config.port);
 
     HttpServer::new(move ||{
         App::new()
         .wrap(Logger::default())
+        .data(pool.clone())
         .configure(app_config)
     })
     .bind(format!("{}:{}", config.host, config.port))?
