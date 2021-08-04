@@ -14,6 +14,7 @@ use tracing_subscriber::EnvFilter;
 pub struct Config{
     pub database_url: String,
     pub host: String,
+    pub jwt_secret: String,
     pub port: i32,
     pub secret_key: String,
 }
@@ -38,6 +39,7 @@ impl Config{
             .context("loading configuration from environment")
     }
 
+    #[instrument(skip(self))]
     pub async fn db_pool(&self) -> Result<PgPool>{
         info!("to create the database connection pool.");
 
@@ -53,9 +55,11 @@ impl Config{
         //     .context("to create the database connection pool")
     }
 
-    pub fn crypto_service(&self) -> CryptoService{
+    #[instrument(skip(self))]
+    pub fn hashing(&self) -> CryptoService{
         CryptoService{
-            key: Arc::new(self.secret_key.clone())
+            key: Arc::new(self.secret_key.clone()),
+            jwt_secret: Arc::new(self.jwt_secret.clone()),
         }
     }
 }

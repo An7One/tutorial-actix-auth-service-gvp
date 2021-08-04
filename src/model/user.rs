@@ -13,6 +13,10 @@ pub struct User{
     pub full_name: Option<String>,
     pub bio: Option<String>,
     pub image: Option<String>,
+    #[serde(skip_serializing)]
+    pub email_verified: bool,
+    #[serde(skip_serializing)]
+    pub active: bool,
     pub created_at: NaiveDateTime,
     pub updated_at:NaiveDateTime,
 }
@@ -27,7 +31,7 @@ pub struct NewUser{
     pub password: String
 }
 
-#[drive(Debug, Deserialize, Validate)]
+#[derive(Debug, Deserialize, Validate)]
 pub struct UpdateProfile{
     pub full_name: Option<String>,
     pub bio: Option<String>,
